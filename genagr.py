@@ -12,6 +12,7 @@ parser = argparse.ArgumentParser(description="Genagr - Gene name grabber, grab f
 parser.add_argument("-r", "--ref", required=True, help="Reference in genbank format.", action="store", dest="ref", type=os.path.abspath)
 parser.add_argument("-o", "--output", required=True, help="Fasta file containing desired gene sequences", action="store", dest="output", type=os.path.abspath)
 parser.add_argument("-l", "--genelist", required=True, help="Text file containing gene names, one per line.", action="store", dest="genelist", type=os.path.abspath)
+parser.add_argument("-d", "--db_name", required=True, help="Database name for ABRicate.", action="store", dest="db_name")
 
 args = parser.parse_args()
 
@@ -49,7 +50,7 @@ with open(args.genelist) as gl:
         else:
             print("{} not found in reference".format(gene))
             continue
-        outrecs.append(SeqRecord(seq=info_d[found_qual][gene][1].extract(recs[info_d[found_qual][gene][0]].seq), id=gene, name='', description=''))
+        outrecs.append(SeqRecord(seq=info_d[found_qual][gene][1].extract(recs[info_d[found_qual][gene][0]].seq), id='{}~~~{}~~~{}~~~{}'.format(args.db_name, gene, info_d[found_qual][gene][0], 'undetermined'), name='', description=''))
 
 outseqs = SeqIO.write(outrecs, args.output, 'fasta')
 print("{} genes output to {}".format(outseqs, args.output))
